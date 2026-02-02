@@ -1,0 +1,6 @@
+node_modules
+video/private/*.*
+video/public/*.*
+video/public/*
+video/private/*
+package-lock.json

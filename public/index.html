@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Media Player</title>
+    <link rel="stylesheet" href="style.css?v=4">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="sidebar-overlay" class="sidebar-overlay"></div>
+    <nav class="mobile-navbar">
+        <button id="mobile-menu-open" class="mobile-toggle-btn">☰</button>
+        <div id="mobile-brand-name" class="mobile-brand">MPlayer</div>
+    </nav>
+    <div class="container">
+        <aside class="sidebar">
+            <div class="logo">
+                <h1 id="sidebar-brand-name">MPlayer</h1>
+                <button id="mobile-menu-close" class="mobile-close-btn">✕</button>
+            </div>
+            <div class="source-switch">
+                <button id="source-video" class="switch-btn active">Public</button>
+                <button id="source-local" class="switch-btn">Private</button>
+            </div>
+            <div class="explorer-controls">
+                <button id="back-btn" title="Go Back">←</button>
+                <button id="mkdir-btn" title="New Folder">+</button>
+                <button id="upload-btn" title="Upload Files">⬆️</button>
+                <input type="file" id="file-upload" multiple style="display: none;">
+                
+                <div class="search-box">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" id="search-input" placeholder="Search..." class="glass-input">
+                </div>
+                
+                <div class="sort-container" style="position: relative; margin-left: auto;">
+                    <button id="sort-toggle-btn" class="nav-btn" title="Sort Options">⇅</button>
+                    <div id="sort-menu-dropdown" class="glass-dropdown" style="display: none;">
+                        <div data-sort="name" class="dropdown-item active">Name</div>
+                        <div data-sort="date" class="dropdown-item">Date</div>
+                        <div data-sort="size" class="dropdown-item">Size</div>
+                        <div data-sort="type" class="dropdown-item">Type</div>
+                    </div>
+                </div>
+            </div>
+            <div id="breadcrumb" class="breadcrumb" style="padding: 0 5px 15px 5px;">video /</div>
+            <ul id="video-list">
+                <!-- File list will be populated here -->
+                <div class="loader"></div>
+            </ul>
+            <div id="selection-toolbar" class="selection-toolbar glass" style="display: none;">
+                <span id="selected-count">0 items</span>
+                <div class="toolbar-actions">
+                    <button id="toolbar-select-all" class="nav-btn">All</button>
+                    <button id="batch-move" class="primary-btn">Move</button>
+                    <button id="batch-delete" class="nav-btn">Delete</button>
+                </div>
+            </div>
+        </aside>
+        
+        <main class="player-area">
+            <div id="media-container" class="video-container glass">
+                <div class="ambient-glow"></div>
+                <!-- Loading Spinner -->
+                <!-- Redesigned Gesture Feedback -->
+                <div id="skip-left-overlay" class="skip-overlay skip-left">
+                    <div class="skip-content"><span>⏪</span><span>10 detik</span></div>
+                </div>
+                <div id="skip-right-overlay" class="skip-overlay skip-right">
+                    <div class="skip-content"><span>⏩</span><span>10 detik</span></div>
+                </div>
+                <div id="speed-pill" class="speed-pill">🚀 2x Speed</div>
+
+                <div id="video-loader" class="video-loader" style="display: none;">
+                    <div class="spinner"></div>
+                    <p>Loading Media...</p>
+                </div>
+                <video id="main-video" style="display: none;">
+                    <source src="" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+                <iframe id="main-iframe" style="display: none; width: 100%; height: 100%; border: none;" allow="autoplay; encrypted-media; fullscreen"></iframe>
+                <!-- Custom Controls -->
+                <div id="video-controls" class="custom-controls" style="display: none;">
+                    <div class="progress-container">
+                        <div id="progress-bar" class="progress-bar">
+                            <div id="progress-filled" class="progress-filled"></div>
+                        </div>
+                    </div>
+                    <div class="controls-main">
+                        <div class="left-controls">
+                            <button id="prev-btn" class="control-btn" title="Previous">⏮</button>
+                            <button id="play-pause" class="control-btn">▶</button>
+                            <button id="next-btn" class="control-btn" title="Next">⏭</button>
+                            <span id="time-display" class="time-display">0:00 / 0:00</span>
+                        </div>
+                        <div class="right-controls">
+                            <div class="volume-container">
+                                <button id="mute-toggle" class="control-btn">🔊</button>
+                                <input type="range" id="volume-slider" min="0" max="1" step="0.1" value="1" class="volume-slider">
+                            </div>
+                            <button id="lockeye-btn" class="control-btn" title="Lockeye (Lock UI)">🔒</button>
+                            <button id="fullscreen-btn" class="control-btn">⛶</button>
+                        </div>
+                    </div>
+                </div>
+                <div id="unlock-indicator" class="unlock-indicator" style="display: none;">
+                    <span>Lockeye Active</span>
+                    <button id="unlock-btn">🔓 Unlock</button>
+                </div>
+                <img id="main-image" src="" style="display: none; max-width: 100%; max-height: 100%; object-fit: contain;">
+                <div id="placeholder" style="display: flex; flex-direction: column; align-items: center; color: #94a3b8;">
+                    <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+                    <p>Select a file to preview</p>
+                </div>
+            </div>
+            <div class="info-area glass">
+                <div class="info-header">
+                    <h2 id="video-title">Select a video to play</h2>
+                    <div class="info-nav">
+                        <button id="info-prev" class="nav-btn" title="Previous">Previous</button>
+                        <button id="info-next" class="nav-btn" title="Next">Next</button>
+                    </div>
+                </div>
+                <p id="video-status">Ready to stream</p>
+            </div>
+
+            <!-- Continue Watching Card -->
+            <div id="recent-play-area" class="info-area glass recent-card" style="display: none;">
+                <div class="recent-header">
+                    <span class="recent-label">🕒 TERAKHIR DILIHAT</span>
+                    <button id="close-recent" class="control-btn" style="font-size: 0.8rem;">×</button>
+                </div>
+                <div class="recent-body">
+                    <div id="recent-title" class="recent-title">Video Name Here</div>
+                    <div class="recent-footer">
+                        <div id="recent-progress" class="recent-meta">02:15 • 45% watched</div>
+                        <button id="resume-btn" class="primary-btn" style="padding: 6px 14px; font-size: 0.8rem;">Resume</button>
+                    </div>
+                </div>
+            </div>
+            
+        </main>
+    </div>
+    
+    <footer id="app-footer" class="app-footer glass" style="display: none;">Loading footer...</footer>
+
+    <script src="script.js"></script>
+
+    <!-- Folder Picker Modal -->
+    <div id="folder-picker-modal" class="modal" style="display: none;">
+        <div class="modal-content glass">
+            <div class="modal-header">
+                <h3>Select Destination</h3>
+                <button id="close-modal">×</button>
+            </div>
+            <div id="picker-breadcrumb" class="modal-breadcrumb">video /</div>
+            <ul id="modal-folder-list" class="modal-list">
+                <!-- Folders only -->
+            </ul>
+            <div class="modal-footer">
+                <button id="move-here-btn" class="primary-btn">Move Here</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- File Context Menu -->
+    <div id="context-menu" class="context-menu glass" style="display: none;">
+        <ul>
+            <li id="menu-select-toggle">Select</li>
+            <li id="menu-cross-move">Make Private</li>
+            <li id="menu-info">Info</li>
+            <li id="menu-rename">Rename</li>
+            <li id="menu-move-to">Move To...</li>
+            <li id="menu-delete">Delete</li>
+        </ul>
+    </div>
+
+    <!-- Global/Project Context Menu -->
+    <div id="global-context-menu" class="context-menu glass" style="display: none;">
+        <div id="context-menu-brand" class="menu-header">MPlayer Project</div>
+        <ul>
+            <li id="menu-copyright" class="menu-info">© 2026 WJayadana</li>
+            <li class="divider"></li>
+            <li id="menu-github">🌐 GitHub</li>
+            <li id="menu-tiktok">🎵 TikTok</li>
+            <li id="menu-instagram">📸 Instagram</li>
+        </ul>
+    </div>
+    <!-- Detailed Info Modal -->
+    <div id="info-modal" class="modal" style="display: none;">
+        <div class="modal-content glass" style="width: 500px;">
+            <div class="modal-header">
+                <h3>Detailed File Info</h3>
+                <button id="close-info-modal" style="background:none; border:none; color:white; font-size:1.5rem; cursor:pointer;">×</button>
+            </div>
+            <div class="info-body" id="info-modal-body" style="padding: 20px 0;">
+                <!-- Content injected via JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Password Modal -->
+    <div id="password-modal" class="modal" style="display: none;">
+        <div class="modal-content glass">
+            <div class="modal-header">
+                <h3>Private Access</h3>
+                <button id="close-password-modal">×</button>
+            </div>
+            <div class="password-body" style="padding: 20px 0;">
+                <p style="margin-bottom: 15px;">Please enter password to access private files.</p>
+                <input type="password" id="private-password-input" placeholder="Password..." style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid var(--glass-border); background: rgba(0,0,0,0.3); color: white;">
+            </div>
+            <div class="modal-footer">
+                <button id="submit-password" class="primary-btn">Unlock</button>
+            </div>
+        </div>
+    </div>
+    <!-- Rename Modal -->
+    <div id="rename-modal" class="modal" style="display: none;">
+        <div class="modal-content glass" style="width: 400px;">
+            <div class="modal-header">
+                <h3>Rename File</h3>
+                <button id="close-rename-modal" style="background:none; border:none; color:white; font-size:1.5rem; cursor:pointer;">×</button>
+            </div>
+            <div class="modal-body" style="padding: 20px 0;">
+                <input type="text" id="rename-input" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid var(--glass-border); background: rgba(0,0,0,0.3); color: white;">
+            </div>
+            <div class="modal-footer">
+                <button id="save-rename" class="primary-btn">Save Rename</button>
+            </div>
+        </div>
+    </div>
+    <!-- Generic Confirm Modal -->
+    <div id="confirm-modal" class="modal" style="display: none;">
+        <div class="modal-content glass" style="width: 400px;">
+            <div class="modal-header">
+                <h3 id="confirm-title">Confirm Action</h3>
+            </div>
+            <div class="modal-body" style="padding: 20px 0;">
+                <p id="confirm-message">Are you sure?</p>
+            </div>
+            <div class="modal-footer" style="gap: 10px;">
+                <button id="confirm-no" class="nav-btn">Cancel</button>
+                <button id="confirm-yes" class="primary-btn">Yes, Proceed</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Generic Input Modal -->
+    <div id="input-modal" class="modal" style="display: none;">
+        <div class="modal-content glass" style="width: 400px;">
+            <div class="modal-header">
+                <h3 id="input-title">Input Required</h3>
+            </div>
+            <div class="modal-body" style="padding: 20px 0;">
+                <p id="input-message" style="margin-bottom: 10px; font-size: 0.9rem; color: #94a3b8;"></p>
+                <input type="text" id="generic-input" style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid var(--glass-border); background: rgba(0,0,0,0.3); color: white;">
+            </div>
+            <div class="modal-footer" style="gap: 10px;">
+                <button id="input-cancel" class="nav-btn">Cancel</button>
+                <button id="input-save" class="primary-btn">Submit</button>
+            </div>
+        </div>
+    </div>
+    <!-- Upload Progress Modal -->
+    <div id="upload-modal" class="modal" style="display: none; align-items: center; justify-content: center; backdrop-filter: blur(10px); background: rgba(0,0,0,0.8); z-index: 1500;">
+        <div class="modal-content glass" style="width: 350px; text-align: center;">
+            <h3 style="margin-bottom: 20px;">Uploading Files...</h3>
+            <div class="progress-container" style="background: rgba(255,255,255,0.1); height: 10px; border-radius: 5px; overflow: hidden;">
+                <div id="upload-progress-bar" style="width: 0%; height: 100%; background: var(--accent-color); transition: width 0.1s linear;"></div>
+            </div>
+            <p id="upload-status-text" style="margin-top: 15px; color: var(--accent-color); font-weight: bold;">0%</p>
+        </div>
+    </div>
+    
+
+    <!-- Danger Alert Modal -->
+    <div id="danger-modal" class="modal" style="display: none; align-items: center; justify-content: center; backdrop-filter: blur(10px); background: rgba(0,0,0,0.8);">
+        <div class="danger-content">
+            <div class="danger-icon">⛔</div>
+            <h2 class="danger-title">ACCESS DENIED</h2>
+            <p class="danger-msg">Incorrect Password detected.</p>
+            <button id="danger-retry-btn" class="danger-btn">TRY AGAIN</button>
+        </div>
+    </div>
+</body>
+</html>
