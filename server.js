@@ -232,6 +232,11 @@ async function searchRecursive(dir, query, rootDir, relativeBase = '') {
     return results;
 }
 
+app.get('/', (req, res) => {
+    res.send('MPlayer API is running');
+});
+
+
 // API Search Endpoint
 app.get('/api/search', async (req, res) => {
     const { query, root } = req.query;
@@ -425,7 +430,7 @@ app.post('/api/upload', upload.array('files'), async (req, res) => {
     }
 });
 
-app.listen(PORT, '0.0.0.0', () => {
+app.listen(PORT, '127.0.0.1', () => {
     console.log(`\n🚀 MPlayer is running!`);
     console.log(`   - Local:    http://localhost:${PORT}`);
     
