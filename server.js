@@ -19,9 +19,15 @@ app.use((req, res, next) => {
 });
 app.use(express.static(path.join(__dirname, 'public')));
 
+const isVercel = !!process.env.VERCEL
+
+const BASE_DIR = isVercel
+  ? '/tmp/video'
+  : path.resolve(__dirname, 'video')
+
 // Define Roots and Auth
-const ROOT_PUBLIC_DIR = path.resolve(__dirname, process.env.PUBLIC_DIR || 'video/public');
-const ROOT_PRIVATE_DIR = path.resolve(__dirname, process.env.PRIVATE_DIR || 'video/private');
+const ROOT_PUBLIC_DIR = path.join(BASE_DIR, 'public')
+const ROOT_PRIVATE_DIR = path.join(BASE_DIR, 'private')
 const PASS = process.env.PRIVATE_PASSWORD || 'admin123';
 
 // Ensure directories exist
